@@ -1,12 +1,12 @@
 #include <iostream>
-#include <iomanip>
+// #include <iomanip>
 #include <list>
 #include <fstream>
 #include <math.h>
 
 using namespace std;
 
-void filternum(list<string> &source, int address, char filter){
+void filternum(list<string> &source, int address, char filter){     //removes all strings from a list that share the filter character in the address position
     if(source.size() == 0){
         cout << "Empty source, leaving\n";
         return;
