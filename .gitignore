@@ -1,3 +1,4 @@
+.vscode/settings.json
 /Day1/.vscode
 /Day1/Day1.exe
 /Day1/Day1tests.cpp
@@ -5,5 +6,7 @@
 /Day2/.vscode
 /Day2/day2.exe
 Day3/Day3.exe
-.vscode/settings.json
 .gitignore
+Day4/Day4.exe
+.gitignore
+Day4/test.txt
