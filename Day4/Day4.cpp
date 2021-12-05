@@ -162,7 +162,10 @@ int main(){
     vector  <bingoboard> bingoboards;
 
     //Process file
-
+    if(!myfile.is_open()){
+        cerr << "Error loading file" << endl;
+    }
+    else{
     //Bingo calls
     myfile >> buffer;
     cout << "The first extraction is: " << buffer <<endl;
@@ -177,10 +180,7 @@ int main(){
     }
 
     //Bingo boards
-    if(!myfile.is_open()){
-        cerr << "Error loading file" << endl;
-    }
-    else{
+    
         for(int x = 0; !myfile.eof() ; x++){
             for (int y = 0; y < 25; y++){
                 myfile >> buffer;   
