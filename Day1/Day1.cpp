@@ -24,3 +24,12 @@ char c;
 std::cin >> c;
 return 0;
 }
+
+for (const auto& line : getLineByLine<Dimensions>("Days\\day2.txt", [](std::string& var)
+		{
+			std::replace(var.begin(), var.end(), 'x', ' ');
+			std::istringstream iss(var);
+			int l, w, h;
+			iss >> l >> w >> h;
+			return Dimensions{ l, w, h };
+		}))
