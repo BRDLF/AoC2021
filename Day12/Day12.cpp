@@ -2,12 +2,14 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <list>
 #include <set>
 
 using namespace std;
 using Cave = map<string, set<string>>;
 
 Cave theCave;
+list<list<string>> routes;
 
 bool addRoom(Cave &fcave, string froom){
 	set<string> mtset;
@@ -35,14 +37,20 @@ void printCave(Cave fcave){
 	cout << endl;
 }
 int main(){
+	fstream input("Day12.txt");
+	if(!input.is_open()){
+		cerr << "Couldn't open file\n";
+	}
+	else{
+		string linebuffer;
+		while(input >> linebuffer){
+			// cout << linebuffer << endl;
+			int pos = linebuffer.find('-');
+			addLink(theCave, linebuffer.substr(0, pos), linebuffer.substr(pos+1, linebuffer.size() - pos));
+		}
+	}
+
 	
-	addLink(theCave, "start", "A");
-	addLink(theCave, "start", "b");
-	addLink(theCave, "A", "c");
-	addLink(theCave, "A", "b");
-	addLink(theCave, "b", "d");
-	addLink(theCave, "A", "end");
-	addLink(theCave, "b", "end");
 
 	printCave(theCave);
 
