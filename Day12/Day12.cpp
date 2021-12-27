@@ -7,6 +7,7 @@
 
 using namespace std;
 using Cave = map<string, set<string>>;
+using Route = map<string, bool>;
 
 Cave theCave;
 set<string> routes;
@@ -17,10 +18,11 @@ void printCave(Cave fcave);
 void traverseCave(Cave &fcave);
 string currRouteRoom(string froute);
 void moveRoute(Cave &fcave, set<string> &froutes);
-bool isVisited(string froute, string froom);
+bool isVisitable(string froute, string froom);
+bool isVisitable(string froute, string froom, bool &fdubsmall);
 
 int main(){
-	fstream input("day12.txt");
+	fstream input("Day12.txt");
 	if(!input.is_open()){
 		cerr << "Couldn't open file\n";
 	}
@@ -37,10 +39,7 @@ int main(){
 
 	printCave(theCave);
 
-	routes.insert("start");
 	moveRoute(theCave, routes);
-
-	//cout << theCave["start"][0];
 
 	cout << "Routes: " << routes.size() <<endl;
 	char c;
@@ -88,14 +87,20 @@ string currRouteRoom(string froute){
 
 void moveRoute(Cave &fcave, set<string> &froutes){
 
-	set<string>::iterator it = froutes.begin();
-	do{
-		//cout << "Current route: " << *it << endl;
+	Route droutes;
+	droutes["start"] = false;
+
+	Route::iterator it = droutes.begin();
+	while(droutes.empty()==false){
 		//get the active room
-		string lroom = currRouteRoom(*it);
+		string lroom = currRouteRoom(it->first);
 		//if we are in the end, go to the next stored route and skip the eval
 		if(lroom == "end"){
-			it++;
+			cout << "Current route: " << it->first << endl;
+			//cout << "We found end, skipping\n";
+			froutes.insert(it->first);
+			droutes.erase(it->first); 
+			it = droutes.begin();
 			continue;
 		}
 
@@ -105,31 +110,44 @@ void moveRoute(Cave &fcave, set<string> &froutes){
 		for(auto const &lstring: caveit){
 			//if we can visit it
 			//cout << lstring << ": ";
-			if( !isVisited(*it, lstring)){
+			bool dubsmall = it->second;
+			if(isVisitable(it->first, lstring, dubsmall)){
 				//create a new route
-				string toAppend = *it;
+				string toAppend = it->first;
 				toAppend.append(",").append(lstring);
 				//cout << "toAppend: " << toAppend << endl;
-				froutes.insert(toAppend);
+				droutes[toAppend] = dubsmall;
 			}
 		}
 
-		froutes.erase(*it); 
-		it = froutes.begin();
-	}while(it != froutes.end());
+		droutes.erase(it->first); 
+		it = droutes.begin();
+	}
 }
 
-bool isVisited(string froute, string froom){
+bool isVisitable(string froute, string froom, bool &fdubsmall){
+	if (froom == "start"){
+		//cout << "Can't revisit start\n\n";
+		return false;												//We can't visit the start room again.
+	}
 	if (isupper(froom[0])){
 		//cout << "Big room\n\n";
-		return false;												//If "Large" room, always return false "Can be visited"
+		return true;												//If "Large" room, always return false "Can be visited"
 	} 
-	if (froute.find(froom) != string::npos){
-		//cout << "true\n\n";
-		return true;												//If room is in froute, return true "Cannot be visited"
+	
+	if (froute.find(froom) != string::npos){				//If small room is in froute
+		if(fdubsmall == false){ 								//If we haven't double dipped a small room
+		//cout << "Using dubsmall\n\n";
+		fdubsmall = true;											//set dubsmall to true ("We have visited a small room twice")
+		return true;												//travel to small room
+	}
+	  else{
+		//cout << "Has visited\n\n";
+		return false;												//If small room is in froute and we have used our double visit, return true "Cannot be visited"
+	  }
 	}
 	else{
-		//cout << "false\n\n";
-		return false;												//If not found, return false. "Can be visited"
+		//cout << "Hasn't been visited\n\n";
+		return true;												//If not found, return false. "Can be visited"
 	}
 }
